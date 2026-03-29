@@ -9,18 +9,30 @@ import Footer from './components/Footer';
 import Auth from './components/Auth';
 import './App.css';
 
+import { auth } from './services/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+
 function AppContent() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('qa-career-hub-session');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  // Sync with real Firebase Auth state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const handleLogin = (userData) => {
-    setUser(userData);
-    localStorage.setItem('qa-career-hub-session', JSON.stringify(userData));
+    // Firebase handles storage automatically, we just close the modal
     setShowAuthModal(false);
   };
 
@@ -28,11 +40,14 @@ function AppContent() {
     setShowLogoutConfirm(true);
   };
 
-  const confirmLogout = () => {
-    setUser(null);
-    localStorage.removeItem('qa-career-hub-session');
-    setShowLogoutConfirm(false);
-    navigate('/');
+  const confirmLogout = async () => {
+    try {
+      await signOut(auth);
+      setShowLogoutConfirm(false);
+      navigate('/');
+    } catch (err) {
+      console.error("Error signing out: ", err);
+    }
   };
 
   return (

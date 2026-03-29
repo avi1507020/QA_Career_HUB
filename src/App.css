@@ -712,16 +712,127 @@ html, body {
 }
 
 @media (max-width: 768px) {
-  .hero-text h1 {
-    font-size: 2.2rem !important;
+  /* Global Resets */
+  .section-container {
+    padding: 1.5rem !important;
   }
+
+  /* Header Mobile Optimization */
+  .main-header {
+    padding: 1rem 1.2rem !important;
+    gap: 0.5rem;
+  }
+
+  .header-logo {
+     gap: 8px !important;
+  }
+
+  .header-logo h1 {
+    font-size: 1.1rem !important;
+  }
+
+  .header-logo p {
+    font-size: 0.65rem !important;
+    white-space: nowrap;
+  }
+
+  .btn-sm, .primary-button {
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    justify-content: center;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Hero Section Mobile */
+  .hero-section {
+    gap: 2rem !important;
+    margin-top: 1rem;
+  }
+
+  .hero-text h1 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1.5rem !important;
+    text-align: center;
+  }
+
+  .hero-image {
+    display: none; /* Hide large illustration on mobile as requested */
+  }
+
+  .home-container {
+    padding: 2rem 1.2rem !important;
+    gap: 2rem !important;
+  }
+
   .highlights-bar {
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem !important;
     align-items: center;
-  }
-  .side-drawer {
     width: 100%;
+  }
+
+  .highlights-bar span {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Cards & Modals */
+  .feature-card {
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
+
+  .cards-grid {
+    gap: 1.5rem !important;
+  }
+
+  .side-drawer {
+    width: 100% !important;
+  }
+
+  .auth-modal-card {
+    padding: 24px !important;
+    width: 95% !important;
+    border-radius: 24px !important;
+  }
+
+  .kanban-board-container {
+     padding: 1rem !important;
+  }
+
+  .section-title {
+    font-size: 1.4rem !important;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Buttons Center */
+  .primary-button, .rocket-button {
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
+  /* Kanban Board Mobile Stack */
+  .kanban-board {
+    flex-direction: column !important;
+    gap: 2.5rem !important;
+    overflow-x: visible !important;
+  }
+
+  .kanban-column {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-radius: 24px !important;
+  }
+
+  .job-cards-container {
+    min-height: auto !important; /* Allow collapse to fit content on mobile stack */
   }
 }
 

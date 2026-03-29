@@ -27,7 +27,7 @@ const Header = ({ user, onLogout, onOpenAuth }) => {
                   <User size={18} />
                </div>
                <div>
-                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '800', color: 'white' }}>{user.firstName}</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '800', color: 'white' }}>{user.displayName || user.email.split('@')[0]}</p>
                   <p style={{ margin: 0, fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)' }}>Active Explorer</p>
                </div>
             </div>

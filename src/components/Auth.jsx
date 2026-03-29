@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Lock, LogIn, UserPlus, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { auth } from '../services/firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 const Auth = ({ onLogin, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,40 +13,39 @@ const Auth = ({ onLogin, onClose }) => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
 
-    const savedUsers = JSON.parse(localStorage.getItem('qa-career-hub-users') || '[]');
-
-    if (isLogin) {
-      // Login Logic
-      const user = savedUsers.find(u => u.email === formData.email && u.password === formData.password);
-      if (user) {
-        onLogin(user);
+    try {
+      if (isLogin) {
+        // Real Firebase Login
+        const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        onLogin(userCredential.user);
       } else {
-        setError('Invalid email or password.');
+        // Real Firebase Signup
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        
+        // Update Firebase Profile with First Name
+        await updateProfile(userCredential.user, {
+          displayName: formData.firstName
+        });
+        
+        setSuccess('Profile created successfully! Please log in.');
+        setIsLogin(true);
+        setFormData({ ...formData, password: '' });
       }
-    } else {
-      // Signup Logic
-      if (savedUsers.some(u => u.email === formData.email)) {
-        setError('A user with this email already exists.');
-        return;
-      }
-      
-      const newUser = { 
-        firstName: formData.firstName, 
-        lastName: formData.lastName, 
-        email: formData.email, 
-        password: formData.password 
-      };
-      
-      localStorage.setItem('qa-career-hub-users', JSON.stringify([...savedUsers, newUser]));
-      setSuccess('Profile created successfully! Please log in.');
-      setIsLogin(true);
-      setFormData({ ...formData, password: '' });
+    } catch (err) {
+      console.error(err);
+      if (err.code === 'auth/email-already-in-use') setError('A user with this email already exists.');
+      else if (err.code === 'auth/invalid-credential') setError('Invalid email or password.');
+      else setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,9 +130,9 @@ const Auth = ({ onLogin, onClose }) => {
             <Lock size={18} style={{ position: 'absolute', left: '1.1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
           </div>
 
-          <button type="submit" className="rocket-button auth-btn-large">
-            {isLogin ? <LogIn size={20} /> : <UserPlus size={20} />}
-            {isLogin ? 'Login Now' : 'Create Profile'}
+          <button type="submit" className="rocket-button auth-btn-large" disabled={loading}>
+            {loading ? 'Processing...' : (isLogin ? <LogIn size={20} /> : <UserPlus size={20} />)}
+            {!loading && (isLogin ? 'Login Now' : 'Create Profile')}
           </button>
         </form>
 

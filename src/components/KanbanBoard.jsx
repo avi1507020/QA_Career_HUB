@@ -5,6 +5,8 @@ import {
   Layers, Calendar, Code2, UserCheck, Award, XCircle,
   Clock, X, CheckCircle2, Rocket, RotateCcw, Info, Lock, LogIn
 } from 'lucide-react';
+import { db } from '../services/firebase';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 const COLUMN_METADATA = {
   applied: { title: 'Applied', icon: <Layers size={18} />, color: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' },
@@ -16,44 +18,14 @@ const COLUMN_METADATA = {
 };
 
 const KanbanBoard = ({ user, onOpenAuth }) => {
-  const STORAGE_KEY = user ? `qa-career-hub-jobs-v2-${user.email}` : null;
-
-  const [columns, setColumns] = useState(() => {
-    if (!STORAGE_KEY) return {
-      applied: { id: 'applied', jobs: [] },
-      scheduled: { id: 'scheduled', jobs: [] },
-      technical: { id: 'technical', jobs: [] },
-      hr: { id: 'hr', jobs: [] },
-      selected: { id: 'selected', jobs: [] },
-      rejected: { id: 'rejected', jobs: [] }
-    };
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : {
-      applied: { id: 'applied', jobs: [] },
-      scheduled: { id: 'scheduled', jobs: [] },
-      technical: { id: 'technical', jobs: [] },
-      hr: { id: 'hr', jobs: [] },
-      selected: { id: 'selected', jobs: [] },
-      rejected: { id: 'rejected', jobs: [] }
-    };
+  const [columns, setColumns] = useState({
+    applied: { id: 'applied', jobs: [] },
+    scheduled: { id: 'scheduled', jobs: [] },
+    technical: { id: 'technical', jobs: [] },
+    hr: { id: 'hr', jobs: [] },
+    selected: { id: 'selected', jobs: [] },
+    rejected: { id: 'rejected', jobs: [] }
   });
-
-  // Re-fetch data when user logs in
-  useEffect(() => {
-    if (STORAGE_KEY) {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setColumns(JSON.parse(saved));
-    } else {
-        setColumns({
-          applied: { id: 'applied', jobs: [] },
-          scheduled: { id: 'scheduled', jobs: [] },
-          technical: { id: 'technical', jobs: [] },
-          hr: { id: 'hr', jobs: [] },
-          selected: { id: 'selected', jobs: [] },
-          rejected: { id: 'rejected', jobs: [] }
-        });
-    }
-  }, [STORAGE_KEY]);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
@@ -69,6 +41,43 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
     notes: '' 
   });
 
+  // REAL-TIME SYNC WITH FIRESTORE
+  useEffect(() => {
+    if (!user) {
+      setColumns({
+        applied: { id: 'applied', jobs: [] },
+        scheduled: { id: 'scheduled', jobs: [] },
+        technical: { id: 'technical', jobs: [] },
+        hr: { id: 'hr', jobs: [] },
+        selected: { id: 'selected', jobs: [] },
+        rejected: { id: 'rejected', jobs: [] }
+      });
+      return;
+    }
+
+    const docRef = doc(db, "boards", user.uid);
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setColumns(docSnap.data().columns);
+      }
+    }, (error) => {
+      console.error("Error syncing with Firestore: ", error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const saveToFirestore = async (newColumns) => {
+    if (!user) return;
+    try {
+      const docRef = doc(db, "boards", user.uid);
+      await setDoc(docRef, { columns: newColumns });
+    } catch (error) {
+      console.error("Error saving to Firestore: ", error);
+      triggerToast('Error saving data', 'red');
+    }
+  };
+
   const triggerToast = (text, type = 'success', icon = <CheckCircle2 size={20} />) => {
     setToastConfig({ text, type, icon });
     setShowToast(true);
@@ -77,7 +86,7 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
 
   const handleSaveAll = () => {
     if (!user) { onOpenAuth(); return; }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(columns));
+    saveToFirestore(columns);
     triggerToast('🎯 Hey Job Hunter! Your details have been saved successfully!');
   };
 
@@ -92,7 +101,7 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
       rejected: { id: 'rejected', jobs: [] }
     };
     setColumns(emptyCols);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(emptyCols));
+    saveToFirestore(emptyCols);
     setIsClearConfirmOpen(false);
     triggerToast('All jobs have been cleared!', 'red', <RotateCcw size={20} />);
   };
@@ -133,7 +142,7 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
     }
 
     setColumns(newCols);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newCols));
+    saveToFirestore(newCols);
   };
 
   const handleOpenNewJob = () => {
@@ -181,7 +190,7 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
     }
 
     setColumns(newCols);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newCols));
+    saveToFirestore(newCols);
     setIsDrawerOpen(false);
   };
 
@@ -195,7 +204,7 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
       }
     };
     setColumns(newCols);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newCols));
+    saveToFirestore(newCols);
     triggerToast('Job Deleted', 'red');
   };
 
@@ -317,9 +326,7 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
                       {...provided.droppableProps}
                       className="job-cards-container"
                       style={{ 
-                        background: snapshot.isDraggingOver ? 'rgba(255,255,255,0.1)' : 'transparent',
-                        minHeight: '200px',
-                        position: 'relative'
+                        background: snapshot.isDraggingOver ? 'rgba(255,255,255,0.1)' : 'transparent'
                       }}
                     >
                       {column.jobs.map((job, index) => (
