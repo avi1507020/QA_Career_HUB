@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -14,7 +13,14 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+let analytics = null;
+import("firebase/analytics").then(({ getAnalytics, isSupported }) => {
+  isSupported().then(yes => {
+    if (yes) analytics = getAnalytics(app);
+  });
+}).catch(err => console.error("Firebase Analytics failed to load:", err));
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 

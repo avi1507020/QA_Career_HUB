@@ -30,20 +30,31 @@ const Auth = ({ onLogin, onClose }) => {
         // Real Firebase Signup
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         
-        // Update Firebase Profile with First Name
+        // Update Firebase Profile with Full Name
         await updateProfile(userCredential.user, {
-          displayName: formData.firstName
+          displayName: `${formData.firstName} ${formData.lastName}`.trim()
         });
         
-        setSuccess('Profile created successfully! Please log in.');
-        setIsLogin(true);
-        setFormData({ ...formData, password: '' });
+        // Reload user to ensure displayName is updated in the current object
+        await userCredential.user.reload();
+        const updatedUser = auth.currentUser;
+
+        setSuccess('Profile created successfully!');
+        onLogin(updatedUser); // Auto-login after signup
       }
     } catch (err) {
-      console.error(err);
-      if (err.code === 'auth/email-already-in-use') setError('A user with this email already exists.');
-      else if (err.code === 'auth/invalid-credential') setError('Invalid email or password.');
-      else setError('An error occurred. Please try again.');
+      console.error("Firebase Auth Error:", err.code, err.message);
+      
+      const errorMessages = {
+        'auth/email-already-in-use': 'This email is already registered. Please login instead.',
+        'auth/invalid-credential': 'Invalid email or password. Please try again.',
+        'auth/weak-password': 'Password is too weak. Must be at least 6 characters.',
+        'auth/operation-not-allowed': 'Sign-up is currently disabled. Please enable "Email/Password" in your Firebase Auth Console.',
+        'auth/network-request-failed': 'Network error. Please check your internet connection.',
+        'auth/too-many-requests': 'Too many failed attempts. Please try again later.'
+      };
+
+      setError(errorMessages[err.code] || `Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
