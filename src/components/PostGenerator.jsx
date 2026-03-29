@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Copy, CheckCircle, Image as ImageIcon, Loader2, Wifi, AlertCircle, Send, Settings, Wand2, Trash2 } from 'lucide-react';
+import { Sparkles, Copy, CheckCircle, Image as ImageIcon, Loader2, Wifi, AlertCircle, Send, Settings, Wand2, Trash2, HelpCircle, ExternalLink, X } from 'lucide-react';
 import { generatePosts, generateImagePrompt, checkGroqConnection } from '../services/aiService';
 
 const PostGenerator = () => {
@@ -15,6 +15,7 @@ const PostGenerator = () => {
   const [isCheckingConnection, setIsCheckingConnection] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState(null); 
   const [connectionMessage, setConnectionMessage] = useState('');
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [copyStatus, setCopyStatus] = useState({});
 
   const handleGenerate = async () => {
@@ -70,32 +71,37 @@ const PostGenerator = () => {
 
   return (
     <div className="section-container" style={{ padding: '1.5rem 2.5rem', background: 'rgba(15, 23, 42, 0.2)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', padding: '1rem 1.5rem', borderRadius: '20px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="section-header-glass">
+        <div className="header-title-group">
              <Sparkles size={24} style={{ color: '#8b5cf6' }} />
-             <h2 style={{ margin: 0, color: 'white', fontSize: '1.6rem', fontWeight: '800' }}>LinkedIn Post Generator</h2>
+             <h2 className="header-title">LinkedIn Post Generator</h2>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="header-actions-group">
+          <button 
+            className="help-action-btn" 
+            onClick={() => setShowHelpModal(true)}
+          >
+            <HelpCircle size={18} /> <span>How to get Groq Key</span>
+          </button>
+          
           {posts.length > 0 && (
             <button 
-              className="primary-button primary-button-red" 
+              className="primary-button primary-button-red btn-sm" 
               onClick={handleClear}
-              style={{ fontSize: '0.85rem' }}
             >
-              <Trash2 size={18} /> Clear Content
+              <Trash2 size={16} /> <span className="hide-mobile">Clear Content</span>
             </button>
           )}
           <button 
-            className="primary-button" 
+            className="config-action-btn" 
             onClick={() => setShowApiKey(!showApiKey)}
-            style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.85rem' }}
           >
-            <Settings size={18} /> {showApiKey ? "Hide Settings" : "API Configuration"}
+            <Settings size={18} /> {showApiKey ? "Hide Settings" : "API Config"}
           </button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', flex: 1, overflow: 'hidden' }}>
+      <div className="generator-layout">
         {/* Left Side: Input & Settings */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {showApiKey && (
@@ -150,7 +156,7 @@ const PostGenerator = () => {
         </div>
 
         {/* Right Side: Generated Content Grid */}
-        <div style={{ overflowY: 'auto', paddingRight: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="post-feed">
           {isLoading && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div className="loading-skeleton" style={{ height: '200px', borderRadius: '24px', background: 'rgba(255,255,255,0.05)', animation: 'pulse 1.5s infinite' }} />
@@ -197,6 +203,51 @@ const PostGenerator = () => {
           ))}
         </div>
       </div>
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="confirmation-overlay open" style={{ zIndex: 6000 }} onClick={() => setShowHelpModal(false)}>
+          <div className="confirmation-popup" style={{ maxWidth: '550px', textAlign: 'left', background: '#0f172a', border: '1px solid rgba(139, 92, 246, 0.3)', color: 'white', padding: '2.5rem' }} onClick={(e) => e.stopPropagation()}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <HelpCircle size={24} style={{ color: '#8b5cf6' }} /> Setup Groq AI
+                </h2>
+                <button onClick={() => setShowHelpModal(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '10px', borderRadius: '50%', cursor: 'pointer' }}>
+                   <X size={20} />
+                </button>
+             </div>
+
+             <div className="help-steps" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                {[
+                  "Go to console.groq.com and create a free account",
+                  "After logging in, click on \"API Keys\" in the left sidebar",
+                  "Click the \"Create API Key\" button",
+                  "Give your key a name (e.g., LinkedIn Post Generator)",
+                  "Copy and save the key immediately — it won't be shown again",
+                  "Paste the key into the API Configuration panel on this page"
+                ].map((step, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '15px' }}>
+                    <div style={{ width: '28px', height: '28px', background: 'rgba(139, 92, 246, 0.2)', border: '1px solid #8b5cf6', color: '#8b5cf6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: '800', flexShrink: 0 }}>
+                      {idx + 1}
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.95rem', color: '#e2e8f0', lineHeight: '1.5' }}>{step}</p>
+                  </div>
+                ))}
+             </div>
+
+             <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem' }}>
+                <a 
+                  href="https://console.groq.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="rocket-button" 
+                  style={{ textDecoration: 'none', padding: '1rem 2rem' }}
+                >
+                  <ExternalLink size={20} /> Open Groq Console
+                </a>
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
