@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Copy, CheckCircle, Image as ImageIcon, Loader2, Wifi, AlertCircle, Send, Settings, Wand2, Trash2, HelpCircle, ExternalLink, X } from 'lucide-react';
 import { generatePosts, generateImagePrompt, checkGroqConnection } from '../services/aiService';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../services/firebase';
 
-const PostGenerator = () => {
+const PostGenerator = ({ user }) => {
   const [topic, setTopic] = useState('');
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +19,24 @@ const PostGenerator = () => {
   const [connectionMessage, setConnectionMessage] = useState('');
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [copyStatus, setCopyStatus] = useState({});
+
+  useEffect(() => {
+    const fetchGroqKey = async () => {
+      if (user) {
+        try {
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && docSnap.data().profile?.groqApiKey) {
+            setApiKey(docSnap.data().profile.groqApiKey);
+            localStorage.setItem('groq-api-key', docSnap.data().profile.groqApiKey);
+          }
+        } catch (e) {
+          console.error("Error fetching Groq API Key:", e);
+        }
+      }
+    };
+    fetchGroqKey();
+  }, [user]);
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
@@ -50,8 +70,32 @@ const PostGenerator = () => {
     }
   };
 
-  const handleSaveApiKey = () => {
+  const handleSaveApiKey = async () => {
     localStorage.setItem('groq-api-key', apiKey);
+    
+    if (user) {
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const existingData = docSnap.data();
+          await setDoc(docRef, {
+            ...existingData,
+            profile: {
+              ...(existingData.profile || {}),
+              groqApiKey: apiKey
+            }
+          }, { merge: true });
+        } else {
+          await setDoc(docRef, {
+            profile: { groqApiKey: apiKey }
+          });
+        }
+      } catch (e) {
+        console.error("Error saving API key to profile:", e);
+      }
+    }
+
     setIsApiKeySaved(true);
     setTimeout(() => setIsApiKeySaved(false), 2000);
   };

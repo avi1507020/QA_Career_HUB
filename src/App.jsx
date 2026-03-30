@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Footer from './components/Footer';
 import Auth from './components/Auth';
 import Portfolio from './components/Portfolio';
+import UserProfilePanel from './components/UserProfilePanel';
 import './App.css';
 
 import { auth } from './services/firebase';
@@ -20,6 +21,7 @@ function AppContent() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showPortfolio, setShowPortfolio] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
 
   // Sync with real Firebase Auth state
   useEffect(() => {
@@ -59,12 +61,13 @@ function AppContent() {
         user={user} 
         onLogout={handleLogoutClick} 
         onOpenAuth={() => setShowAuthModal(true)} 
+        onOpenProfile={() => setShowUserProfile(true)}
       />
       
       <main className="main-content-full">
         <Routes>
           <Route path="/" element={<Home onOpenPortfolio={() => { navigate('/avishek'); setShowPortfolio(true); }} />} />
-          <Route path="/linkedin-generator" element={<PostGenerator />} />
+          <Route path="/linkedin-generator" element={<PostGenerator user={user} />} />
           <Route path="/job-tracker" element={<KanbanBoard user={user} onOpenAuth={() => setShowAuthModal(true)} />} />
           <Route path="/avishek" element={<Home onOpenPortfolio={() => setShowPortfolio(true)} />} />
           <Route path="*" element={<Navigate to="/" />} />
@@ -81,6 +84,14 @@ function AppContent() {
         <Auth 
           onLogin={handleLogin} 
           onClose={() => setShowAuthModal(false)} 
+        />
+      )}
+
+      {user && (
+        <UserProfilePanel 
+          user={user}
+          isOpen={showUserProfile}
+          onClose={() => setShowUserProfile(false)}
         />
       )}
 
