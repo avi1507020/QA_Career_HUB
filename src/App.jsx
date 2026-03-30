@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, Save } from 'lucide-react';
 import Header from './components/Header';
 import PostGenerator from './components/PostGenerator';
@@ -7,6 +7,7 @@ import KanbanBoard from './components/KanbanBoard';
 import Home from './components/Home';
 import Footer from './components/Footer';
 import Auth from './components/Auth';
+import Portfolio from './components/Portfolio';
 import './App.css';
 
 import { auth } from './services/firebase';
@@ -14,9 +15,11 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 function AppContent() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showPortfolio, setShowPortfolio] = useState(false);
 
   // Sync with real Firebase Auth state
   useEffect(() => {
@@ -60,14 +63,19 @@ function AppContent() {
       
       <main className="main-content-full">
         <Routes>
-          <Route path="/" element={<Home onOpenLinkedIn={null} />} />
+          <Route path="/" element={<Home onOpenPortfolio={() => { navigate('/avishek'); setShowPortfolio(true); }} />} />
           <Route path="/linkedin-generator" element={<PostGenerator />} />
           <Route path="/job-tracker" element={<KanbanBoard user={user} onOpenAuth={() => setShowAuthModal(true)} />} />
+          <Route path="/avishek" element={<Home onOpenPortfolio={() => setShowPortfolio(true)} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
 
       <Footer />
+
+      {(showPortfolio || location.pathname === '/avishek') && (
+        <Portfolio onBack={() => { setShowPortfolio(false); navigate('/'); }} />
+      )}
 
       {showAuthModal && (
         <Auth 
@@ -75,6 +83,7 @@ function AppContent() {
           onClose={() => setShowAuthModal(false)} 
         />
       )}
+
 
       {showLogoutConfirm && (
         <div className="confirmation-overlay open" onClick={() => setShowLogoutConfirm(false)}>

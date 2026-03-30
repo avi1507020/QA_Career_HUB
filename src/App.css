@@ -152,24 +152,28 @@ html, body {
 }
 
 .primary-button {
-  padding: 0.8rem 1.8rem;
-  border-radius: 12px;
-  font-weight: 600;
+  min-width: 180px;
+  height: 52px;
+  border-radius: 14px;
+  font-weight: 700;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: white;
+  white-space: nowrap;
+  padding: 0 1.5rem;
 }
 
 .primary-button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  filter: brightness(1.15);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.3);
 }
 
 .primary-button-red {
@@ -183,12 +187,24 @@ html, body {
 }
 
 .primary-button-blue {
-  background: #3b82f6;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+.primary-button-ghost {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(5px);
+}
+
+.primary-button-ghost:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
 }
 
 .secondary-button {
-  padding: 0.8rem 1.8rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 12px;
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1057,4 +1073,37 @@ html, body {
   font-weight: 800 !important;
   border-radius: 12px !important;
   margin-top: 1rem !important;
+}
+
+/* Hero Buttons Layout - Force Single Row */
+.hero-buttons-row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 16px !important;
+  width: 100%;
+  max-width: 800px;
+  margin-top: 2rem;
+}
+
+.hero-buttons-row .primary-button {
+  height: 52px !important;
+  min-width: 160px !important;
+  flex: 1 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 640px) {
+  .hero-buttons-row {
+    flex-direction: column !important;
+    width: 100%;
+    margin-top: 1.5rem;
+    gap: 12px !important;
+  }
+  .hero-buttons-row .primary-button {
+    width: 100% !important;
+    min-width: 100% !important;
+    flex: unset !important;
+  }
 }

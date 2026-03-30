@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Briefcase, CheckCircle } from 'lucide-react';
 
-const Home = () => {
+const Home = ({ onOpenPortfolio }) => {
   return (
     <div className="home-container">
       <div className="hero-section">
@@ -20,13 +20,19 @@ const Home = () => {
           }}>
             The professional all-in-one platform crafted by Avishek, QA Automation Engineer — who lives and breathes testing. Track your job applications, stay on top of every interview, and generate high-impact LinkedIn content with AI.
           </p>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <Link to="/job-tracker" className="primary-button primary-button-blue" style={{ padding: '1rem 2.5rem', fontSize: '1rem' }}>
+          <div className="hero-buttons-row">
+            <Link to="/job-tracker" className="primary-button primary-button-blue">
               Explore Board
             </Link>
-            <Link to="/linkedin-generator" className="primary-button" style={{ padding: '1rem 2.5rem', fontSize: '1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <Link to="/linkedin-generator" className="primary-button primary-button-ghost">
               Create Content
             </Link>
+            <button 
+              onClick={onOpenPortfolio}
+              className="primary-button primary-button-ghost"
+            >
+              👨‍💻 Meet the Builder
+            </button>
           </div>
         </div>
         
