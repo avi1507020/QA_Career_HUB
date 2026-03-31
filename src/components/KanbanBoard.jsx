@@ -78,10 +78,10 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
     }
   };
 
-  const triggerToast = (text, type = 'success', icon = <CheckCircle2 size={20} />) => {
+  const triggerToast = (text, type = 'success', icon = <CheckCircle2 size={20} />, duration = 4500) => {
     setToastConfig({ text, type, icon });
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    setTimeout(() => setShowToast(false), duration);
   };
 
   const handleSaveAll = () => {
@@ -122,13 +122,21 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
 
     if (sourceColId === destColId && source.index === destination.index) return;
 
-    const newCols = { ...columns };
-    const sourceJobs = [...newCols[sourceColId].jobs];
-    const destJobs = sourceColId === destColId ? sourceJobs : [...newCols[destColId].jobs];
+    const newCols = {
+      applied: { ...columns.applied, jobs: [...columns.applied.jobs] },
+      scheduled: { ...columns.scheduled, jobs: [...columns.scheduled.jobs] },
+      technical: { ...columns.technical, jobs: [...columns.technical.jobs] },
+      hr: { ...columns.hr, jobs: [...columns.hr.jobs] },
+      selected: { ...columns.selected, jobs: [...columns.selected.jobs] },
+      rejected: { ...columns.rejected, jobs: [...columns.rejected.jobs] }
+    };
+    
+    const sourceJobs = newCols[sourceColId].jobs;
+    const destJobs = sourceColId === destColId ? sourceJobs : newCols[destColId].jobs;
     
     if (sourceColId === 'applied' && destColId !== 'applied') {
       const jobToClone = sourceJobs[source.index];
-      const clone = { ...jobToClone, id: `job-clone-${Date.now()}`, stage: destColId };
+      const clone = { ...jobToClone, id: `job-clone-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, stage: destColId };
       destJobs.splice(destination.index, 0, clone);
     } else {
       const [removed] = sourceJobs.splice(source.index, 1);
@@ -136,13 +144,16 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
       destJobs.splice(destination.index, 0, updatedJob);
     }
 
-    newCols[sourceColId] = { ...newCols[sourceColId], jobs: sourceJobs };
-    if (sourceColId !== destColId) {
-      newCols[destColId] = { ...newCols[destColId], jobs: destJobs };
-    }
-
     setColumns(newCols);
     saveToFirestore(newCols);
+
+    if (destColId !== sourceColId) {
+      if (destColId === 'selected') {
+        triggerToast('🎉 Hey Job Hunter, Congrats on getting the job!', 'success', <></>, 4500);
+      } else if (destColId === 'rejected') {
+        triggerToast('💪 Please do not feel bad, keep trying, something great is coming your way!', 'success', <></>, 4500);
+      }
+    }
   };
 
   const handleOpenNewJob = () => {
@@ -169,18 +180,37 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
     if (!user) return;
     if (!newJob.company || !newJob.role) return;
 
-    const newCols = { ...columns };
+    const newCols = {
+      applied: { ...columns.applied, jobs: [...columns.applied.jobs] },
+      scheduled: { ...columns.scheduled, jobs: [...columns.scheduled.jobs] },
+      technical: { ...columns.technical, jobs: [...columns.technical.jobs] },
+      hr: { ...columns.hr, jobs: [...columns.hr.jobs] },
+      selected: { ...columns.selected, jobs: [...columns.selected.jobs] },
+      rejected: { ...columns.rejected, jobs: [...columns.rejected.jobs] }
+    };
 
     if (editingJob) {
       const oldColId = editingJob.columnId;
       const targetStage = newJob.stage;
-      newCols[oldColId].jobs = newCols[oldColId].jobs.filter(j => j.id !== editingJob.id);
-      const updatedJob = { ...newJob, id: editingJob.id };
-      newCols[targetStage].jobs = [updatedJob, ...newCols[targetStage].jobs];
+      
+      const updatedJob = { 
+        ...newJob, 
+        id: editingJob.id,
+        createdAt: newJob.appliedDate || newJob.createdAt 
+      };
+
+      if (oldColId === targetStage) {
+        newCols[oldColId].jobs = newCols[oldColId].jobs.map(j => 
+          j.id === editingJob.id ? updatedJob : j
+        );
+      } else {
+        newCols[oldColId].jobs = newCols[oldColId].jobs.filter(j => j.id !== editingJob.id);
+        newCols[targetStage].jobs = [updatedJob, ...newCols[targetStage].jobs];
+      }
       triggerToast('Job Details Updated!');
     } else {
       const job = {
-        id: `job-${Date.now()}`,
+        id: `job-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         ...newJob,
         createdAt: newJob.appliedDate
       };
@@ -238,6 +268,18 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
       </div>
     </div>
   );
+
+  const getDateLabel = (stage) => {
+    switch(stage) {
+      case 'applied': return 'Applied Date';
+      case 'scheduled': return 'Interview Date';
+      case 'technical': return 'Technical Round Date';
+      case 'hr': return 'HR Round Date';
+      case 'selected': return 'Selected Date';
+      case 'rejected': return 'Rejected Date';
+      default: return 'Applied Date';
+    }
+  };
 
   return (
     <div className="kanban-board-container" style={{ position: 'relative' }}>
@@ -391,14 +433,25 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
             </div>
 
             <div className="input-group">
-              <label>Applied Date</label>
+              <label>{getDateLabel(newJob.stage)}</label>
               <input type="date" value={newJob.appliedDate} onChange={(e) => setNewJob({...newJob, appliedDate: e.target.value})} />
             </div>
 
             <div className="input-group">
-              <label>Current Stage</label>
-              <select value={newJob.stage} onChange={(e) => setNewJob({...newJob, stage: e.target.value})}>
-                {Object.keys(COLUMN_METADATA).map(k => ( <option key={k} value={k}>{COLUMN_METADATA[k].title}</option> ))}
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                Current Stage {!editingJob && <Lock size={12} style={{ opacity: 0.6 }} />}
+              </label>
+              <select 
+                value={newJob.stage} 
+                onChange={(e) => setNewJob({...newJob, stage: e.target.value, appliedDate: new Date().toISOString().split('T')[0]})}
+                disabled={!editingJob}
+                style={{
+                  opacity: !editingJob ? 0.6 : 1,
+                  cursor: !editingJob ? 'not-allowed' : 'pointer',
+                  backgroundColor: !editingJob ? 'rgba(255, 255, 255, 0.02)' : undefined
+                }}
+              >
+                {Object.keys(COLUMN_METADATA).map(k => ( <option key={k} value={k} style={{ background: '#0f172a', color: '#f1f5f9' }}>{COLUMN_METADATA[k].title}</option> ))}
               </select>
             </div>
 

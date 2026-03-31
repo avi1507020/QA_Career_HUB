@@ -1249,3 +1249,17 @@ html, body {
     padding: 1.2rem !important;
   }
 }
+
+/* Custom Select Option Styling */
+.input-group select option {
+  background: #0f172a;
+  color: #f1f5f9;
+  padding: 12px;
+}
+.input-group select option:checked {
+  background: #3b82f6; 
+  color: white;
+}
+.input-group select option:hover {
+  background: rgba(139, 92, 246, 0.4);
+}

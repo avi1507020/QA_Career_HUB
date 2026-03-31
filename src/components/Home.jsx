@@ -51,7 +51,7 @@ const Home = ({ onOpenPortfolio }) => {
           </div>
           <h3>LinkedIn Content Engine</h3>
           <p>
-            Generate 10+ human-like LinkedIn posts and viral image prompts tailored for the QA domain.
+            Generate 5 human-like LinkedIn posts and viral image prompts tailored for the QA domain.
           </p>
           <Link to="/linkedin-generator" className="primary-button" style={{ background: '#8b5cf6', color: 'white', marginTop: 'auto' }}>
             Start Creating
