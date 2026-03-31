@@ -407,16 +407,16 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
         </div>
       </DragDropContext>
 
-      <div className={`side-drawer-overlay ${isDrawerOpen ? 'open' : ''}`} onClick={() => setIsDrawerOpen(false)}>
+      <div className={`side-drawer-overlay ${isDrawerOpen ? 'open' : ''}`}>
         <div className="side-drawer" onClick={(e) => e.stopPropagation()}>
           <div className="drawer-header">
-            <div>
+            <div className="drawer-header-text">
               <h2>{editingJob ? "✏️ Edit Journey" : "🚀 Add New Journey"}</h2>
-              <p style={{ fontSize: '0.8rem', opacity: 0.9, marginTop: '4px' }}>
+              <p>
                 {editingJob ? "Adjust your opportunity details" : "Track your next big opportunity"}
               </p>
             </div>
-            <button onClick={() => setIsDrawerOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', padding: '8px', borderRadius: '50%', color: 'white', border: 'none', cursor: 'pointer' }}>
+            <button className="drawer-close-btn" onClick={() => setIsDrawerOpen(false)}>
               <X size={20} />
             </button>
           </div>
