@@ -1133,3 +1133,119 @@ html, body {
 .post-content-scroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #60a5fa, #a78bfa);
 }
+
+/* -------------------------------------------
+   RESPONSIVE DESIGN ADDITIONS
+---------------------------------------------*/
+/* Prevent horizontal scrolling globally */
+html, body {
+  overflow-x: hidden;
+  width: 100vw;
+  max-width: 100%;
+}
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Desktop Menu Default */
+.desktop-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.mobile-menu-btn {
+  display: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+.mobile-dropdown-menu {
+  display: none;
+}
+
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 1024px) {
+  .desktop-menu {
+    display: none; /* Hide standard actions */
+  }
+  
+  .mobile-menu-btn {
+    display: flex; /* Show hamburger */
+    padding: 0.5rem;
+  }
+  
+  .mobile-dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    z-index: 1000;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: slideDown 0.3s ease-out forwards;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Typography Scaling */
+  html {
+    font-size: 15px;
+  }
+  .hero-text h1 {
+    font-size: 2.2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Cards Stack Vertically */
+  .cards-grid {
+    flex-direction: column;
+  }
+
+  /* Full Width Buttons & Inputs on Mobile */
+  .primary-button, 
+  .secondary-button, 
+  .rocket-button, 
+  .auth-input, 
+  input, 
+  textarea {
+    width: 100% !important;
+  }
+
+  /* Adjust Image Prompt Modal */
+  .confirmation-popup {
+    width: 95%;
+    max-width: 100%;
+    padding: 1.5rem;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  /* Typography Scaling for Mobile */
+  html {
+    font-size: 14px;
+  }
+  .hero-text h1 {
+    font-size: 1.8rem !important;
+  }
+  .header-logo h1 {
+    font-size: 1.2rem !important;
+  }
+  .section-title {
+    font-size: 1.3rem !important;
+  }
+  
+  /* Fix padding and spacing for main containers */
+  .home-container, .section-container {
+    padding: 1.2rem !important;
+  }
+}
