@@ -51,8 +51,42 @@ export const generatePosts = async (topic, apiKey) => {
 };
 
 export const generateImagePrompt = async (postContent, apiKey) => {
-  // Static high-quality prompt for dramatic tech visual
-  return `A dramatic wide LinkedIn post image, 1200x627 pixels. Split down the middle. Left side shows a clean, organized traditional software testing dashboard with green checkmarks and "PASS" labels in a calm blue-toned environment. Right side shows a chaotic, glitching AI interface with hallucinated text, red warning signs, question marks, and broken neural network visualizations in a dark red-orange toned environment. A bold white crack runs down the center dividing both worlds. At the top center, large bold white text reads "Most teams build AI." At the bottom center, bold text reads "Almost nobody tests it." Modern, editorial, tech-magazine cover aesthetic, dramatic lighting contrast, cinematic feel, no people, no faces, 4K sharp.`;
+  if (!apiKey) throw new Error("Please configure your Groq API Key first.");
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert image prompt engineer. Based on the following LinkedIn post content, generate a single detailed image generation prompt suitable for tools like DALL-E, Midjourney, or Gemini. The prompt should visually represent the theme and message of the post. Return only the image prompt, nothing else."
+          },
+          {
+            role: "user",
+            content: postContent
+          }
+        ],
+        temperature: 0.7
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || "Image prompt generation failed");
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content.trim();
+  } catch (error) {
+    console.error("Groq Image Prompt Generation Error:", error);
+    throw error;
+  }
 };
 
 export const checkGroqConnection = async (apiKey) => {

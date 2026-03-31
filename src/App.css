@@ -872,9 +872,11 @@ html, body {
 .post-feed {
   overflow-y: auto;
   padding-right: 1rem;
+  padding-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-height: 0; /* Critical: enables overflow-y: auto inside CSS Grid */
 }
 
 .logout-modal {
@@ -1106,4 +1108,28 @@ html, body {
     min-width: 100% !important;
     flex: unset !important;
   }
+}
+
+/* Post Card Scrollable Content Area */
+.post-content-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.4) rgba(255, 255, 255, 0.04);
+}
+
+.post-content-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.post-content-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+}
+
+.post-content-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+}
+
+.post-content-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #60a5fa, #a78bfa);
 }
