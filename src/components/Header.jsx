@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, LogOut, UserPlus, Menu, X } from 'lucide-react';
+import { Home, User, LogOut, UserPlus, Menu, X, Zap } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import GroqApiModal from './GroqApiModal';
 
 const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
   const location = useLocation();
   const [profileData, setProfileData] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGroqModalOpen, setIsGroqModalOpen] = useState(false);
+  
+  const hasGroqKey = Boolean(
+    profileData?.groqApiKey || 
+    localStorage.getItem('groq-api-key') || 
+    localStorage.getItem('groq_api_key_guest')
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -43,6 +51,17 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
       <div className="desktop-menu">
         {user ? (
           <>
+            <button 
+              onClick={() => setIsGroqModalOpen(true)}
+              className="primary-button groq-btn-mobile-wrapper"
+              style={{ padding: '0.5rem 1rem', background: hasGroqKey ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)', border: `1px solid ${hasGroqKey ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255,255,255,0.1)'}`, color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '700' }}
+            >
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: hasGroqKey ? '#10b981' : '#ef4444', boxShadow: `0 0 8px ${hasGroqKey ? '#10b981' : '#ef4444'}` }}></div>
+              <span className="groq-btn-text-full">{hasGroqKey ? 'GROQ Connected' : 'GROQ API'}</span>
+              <span className="groq-btn-text-tablet">GROQ</span>
+              <Zap className="groq-btn-icon-mobile" size={16} fill={hasGroqKey ? "#10b981" : "transparent"} color={hasGroqKey ? "#10b981" : "white"} />
+            </button>
+
             <div 
               onClick={onOpenProfile}
               style={{ 
@@ -85,13 +104,26 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
             </button>
           </>
         ) : (
-          <button 
-            onClick={onOpenAuth}
-            className="primary-button primary-button-blue"
-            style={{ padding: '0.8rem 1.8rem', fontSize: '0.9rem', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)' }}
-          >
-            <UserPlus size={18} /> Login / Sign Up
-          </button>
+          <>
+            <button 
+              onClick={onOpenAuth}
+              className="primary-button primary-button-blue"
+              style={{ padding: '0.8rem 1.8rem', fontSize: '0.9rem', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)' }}
+            >
+              <UserPlus size={18} fill="white" /> Login / Sign Up
+            </button>
+
+            <button 
+              onClick={() => setIsGroqModalOpen(true)}
+              className="primary-button groq-btn-mobile-wrapper"
+              style={{ padding: '0.5rem 1rem', background: hasGroqKey ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)', border: `1px solid ${hasGroqKey ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255,255,255,0.1)'}`, color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '700' }}
+            >
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: hasGroqKey ? '#10b981' : '#ef4444', boxShadow: `0 0 8px ${hasGroqKey ? '#10b981' : '#ef4444'}` }}></div>
+              <span className="groq-btn-text-full">{hasGroqKey ? 'GROQ Connected' : 'GROQ API'}</span>
+              <span className="groq-btn-text-tablet">GROQ</span>
+              <Zap className="groq-btn-icon-mobile" size={16} fill={hasGroqKey ? "#10b981" : "transparent"} color={hasGroqKey ? "#10b981" : "white"} />
+            </button>
+          </>
         )}
       </div>
 
@@ -105,6 +137,16 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
         <div className="mobile-dropdown-menu">
           {user ? (
             <>
+              <button 
+                onClick={() => handleMobileAction(() => setIsGroqModalOpen(true))}
+                className="primary-button"
+                style={{ width: '100%', padding: '1rem', background: hasGroqKey ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)', border: `1px solid ${hasGroqKey ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255,255,255,0.1)'}`, color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', fontWeight: '700' }}
+              >
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: hasGroqKey ? '#10b981' : '#ef4444', boxShadow: `0 0 8px ${hasGroqKey ? '#10b981' : '#ef4444'}` }}></div>
+                <Zap size={18} fill={hasGroqKey ? "#10b981" : "transparent"} color={hasGroqKey ? "#10b981" : "white"} />
+                {hasGroqKey ? 'GROQ Connected' : 'GROQ API Connection'}
+              </button>
+
               <div 
                 onClick={() => handleMobileAction(onOpenProfile)}
                 style={{ 
@@ -146,15 +188,31 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
               </button>
             </>
           ) : (
-            <button 
-              onClick={() => handleMobileAction(onOpenAuth)}
-              className="primary-button primary-button-blue"
-              style={{ padding: '0.8rem 1.8rem', fontSize: '1rem', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', width: '100%', height: '52px' }}
-            >
-              <UserPlus size={20} /> Login / Sign Up
-            </button>
+            <>
+              <button 
+                onClick={() => handleMobileAction(onOpenAuth)}
+                className="primary-button primary-button-blue"
+                style={{ padding: '0.8rem 1.8rem', fontSize: '1rem', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', width: '100%', height: '52px' }}
+              >
+                <UserPlus size={20} fill="white" /> Login / Sign Up
+              </button>
+
+              <button 
+                onClick={() => handleMobileAction(() => setIsGroqModalOpen(true))}
+                className="primary-button"
+                style={{ width: '100%', padding: '1rem', background: hasGroqKey ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)', border: `1px solid ${hasGroqKey ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255,255,255,0.1)'}`, color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', fontWeight: '700', marginTop: '1rem' }}
+              >
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: hasGroqKey ? '#10b981' : '#ef4444', boxShadow: `0 0 8px ${hasGroqKey ? '#10b981' : '#ef4444'}` }}></div>
+                <Zap size={18} fill={hasGroqKey ? "#10b981" : "transparent"} color={hasGroqKey ? "#10b981" : "white"} />
+                {hasGroqKey ? 'GROQ Connected' : 'GROQ API Connection'}
+              </button>
+            </>
           )}
         </div>
+      )}
+
+      {isGroqModalOpen && (
+        <GroqApiModal user={user} onClose={() => setIsGroqModalOpen(false)} />
       )}
     </header>
   );

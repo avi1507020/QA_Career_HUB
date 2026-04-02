@@ -70,6 +70,19 @@ const Home = ({ onOpenPortfolio }) => {
              Open Board
           </Link>
         </div>
+
+        <div className="feature-card">
+          <div style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '1rem', borderRadius: '16px', border: '1px solid rgba(139, 92, 246, 0.3)', width: 'fit-content' }}>
+            <span style={{ fontSize: '28px' }}>🎭</span>
+          </div>
+          <h3>Learn Playwright</h3>
+          <p>
+            Master Playwright from basics to advanced. Interactive lessons, real examples, and interview-ready answers for every topic.
+          </p>
+          <Link to="/learn-playwright" className="primary-button" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', color: 'white', marginTop: 'auto' }}>
+             Start Learning
+          </Link>
+        </div>
       </div>
 
       <div className="highlights-bar">

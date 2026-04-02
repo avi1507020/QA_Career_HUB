@@ -860,8 +860,147 @@ html, body {
   }
 
   .home-container {
-    padding: 2rem 1.2rem !important;
-    gap: 2rem !important;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* GROQ API Modal Responsive Styles */
+.groq-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.groq-modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.groq-modal {
+  background: #0f172a;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: white;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 28px;
+  position: relative;
+  transform: scale(0.9);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.groq-modal-overlay.open .groq-modal {
+  transform: scale(1);
+}
+
+@media (max-width: 1024px) {
+  .groq-modal {
+    max-width: 90vw;
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .groq-modal-overlay {
+    align-items: flex-end;
+  }
+  
+  .groq-modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 24px 24px 0 0;
+    transform: translateY(100%);
+    padding: 2rem 1.5rem 3rem;
+    overflow-y: auto;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+  
+  .groq-modal-overlay.open .groq-modal {
+    transform: translateY(0);
+  }
+  
+  .groq-input-stack {
+    flex-direction: column !important;
+  }
+  
+  .groq-input-stack button {
+    width: 100% !important;
+  }
+}
+
+.groq-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.groq-close-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(90deg);
+}
+
+/* Toast Styles */
+.groq-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #10b981;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+  z-index: 10000;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+}
+
+.groq-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Navbar Button Responsive Helpers */
+@media (min-width: 1025px) {
+  .groq-btn-text-tablet, .groq-btn-icon-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .groq-btn-text-full, .groq-btn-icon-mobile { display: none !important; }
+}
+
+@media (max-width: 768px) {
+  .groq-btn-text-full, .groq-btn-text-tablet { display: none !important; }
+  .groq-btn-mobile-wrapper {
+    padding: 0.5rem !important;
+    min-width: 0 !important;
   }
 
   .highlights-bar {
@@ -1340,4 +1479,178 @@ html, body {
 }
 .input-group select option:hover {
   background: rgba(139, 92, 246, 0.4);
+}
+
+/* Generator Layout */
+.generator-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .generator-layout {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
+}
+
+.post-feed {
+  overflow-y: auto;
+  padding-right: 1rem;
+  padding-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 0; /* Critical: enables overflow-y: auto inside CSS Grid */
+}
+
+.logout-modal {
+  max-width: 450px !important;
+}
+
+/* GROQ API Modal Responsive Styles */
+.groq-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.groq-modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.groq-modal {
+  background: #0f172a;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: white;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 28px;
+  position: relative;
+  transform: scale(0.9);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.groq-modal-overlay.open .groq-modal {
+  transform: scale(1);
+}
+
+@media (max-width: 1024px) {
+  .groq-modal {
+    max-width: 90vw;
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .groq-modal-overlay {
+    align-items: flex-end;
+  }
+  
+  .groq-modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 95vh;
+    border-radius: 24px 24px 0 0;
+    transform: translateY(100%);
+    padding: 2rem 1.5rem 3rem;
+    overflow-y: auto;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  
+  .groq-modal-overlay.open .groq-modal {
+    transform: translateY(0);
+  }
+  
+  .groq-input-stack {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  .groq-input-stack button {
+    width: 100% !important;
+  }
+}
+
+.groq-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.groq-close-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(90deg);
+}
+
+/* Toast Styles */
+.groq-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #10b981;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+  z-index: 10000;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.groq-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Navbar Button Responsive Helpers */
+@media (min-width: 1025px) {
+  .groq-btn-text-tablet, .groq-btn-icon-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .groq-btn-text-full, .groq-btn-icon-mobile { display: none !important; }
+}
+
+@media (max-width: 768px) {
+  .groq-btn-text-full, .groq-btn-text-tablet { display: none !important; }
+  .groq-btn-mobile-wrapper {
+    padding: 0.5rem !important;
+    min-width: 0 !important;
+  }
 }
