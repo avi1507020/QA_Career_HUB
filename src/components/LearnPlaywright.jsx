@@ -245,32 +245,91 @@ const LearnPlaywright = ({ user }) => {
         }
 
         .control-panel { 
-          padding: 2rem; 
+          padding: 2.5rem 2rem; 
           background: rgba(30,41,59,0.4); 
           border-radius: 24px; 
           border: 1px solid rgba(255,255,255,0.1); 
           backdrop-filter: blur(10px);
         }
 
-        .panel-section { margin-bottom: 1.5rem; }
-        .panel-section label { display: block; color: #94a3b8; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; }
+        .panel-section { 
+          margin-bottom: 2rem; 
+          width: 100%;
+          max-width: 100%;
+          overflow: hidden;
+          position: relative;
+          box-sizing: border-box;
+        }
+
+        .panel-section label { display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 12px; }
         
         .control-panel select { 
           width: 100%; 
-          background: rgba(15, 23, 42, 0.8); 
-          border: 1px solid rgba(139,92,246,0.3); 
-          border-radius: 12px; 
-          padding: 12px; 
+          max-width: 100%;
+          max-height: 44px;
+          height: 44px;
+          overflow: hidden;
+          font-size: 13px;
+          padding: 0 35px 0 12px;
+          border-radius: 10px;
+          border: 1px solid rgba(255,255,255,0.15);
+          background-color: rgba(30, 41, 59, 1);
           color: white; 
-          font-size: 16px; 
           cursor: pointer;
+          appearance: none;
+          -webkit-appearance: none;
           outline: none;
-          transition: all 0.2s;
+          box-sizing: border-box;
+          transition: all 0.3s ease;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 10px center;
+          background-size: 14px;
+          text-overflow: ellipsis;
+        }
+
+        .control-panel select option {
+          background-color: #1e293b;
+          color: white;
+          padding: 12px;
         }
         
+        /* If a duplicate select is rendering below the first */
+        .panel-section select:nth-of-type(2) {
+          display: none;
+        }
+
+        .control-panel select:hover {
+          border-color: rgba(255,255,255,0.25);
+          background-color: rgba(255,255,255,0.12);
+        }
+
         .control-panel select:focus {
-          border-color: #8b5cf6;
-          box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+          max-height: 280px;
+          overflow-y: auto;
+          border-color: #7c63f5;
+        }
+
+        .topic-select optgroup {
+          font-size: 10px;
+          font-weight: 700;
+          color: #7c63f5;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          background: #1a1535;
+        }
+
+        .topic-select option {
+          font-size: 13px;
+          padding: 8px 14px;
+          background: #1a1535;
+          color: rgba(255,255,255,0.8);
+        }
+
+        .topic-select option:hover,
+        .topic-select option:checked {
+          background: rgba(124, 58, 237, 0.35);
+          color: white;
         }
 
         .explain-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; color: white; border-radius: 12px; cursor: pointer; font-weight: 700; }
@@ -307,14 +366,67 @@ const LearnPlaywright = ({ user }) => {
         }
         
         @media (max-width: 768px) {
-          .mobile-fab { display: flex; }
+          .playwright-page-container { 
+            padding: 1rem !important; 
+            overflow-x: hidden;
+            box-sizing: border-box;
+            max-width: 100%;
+          }
+          .playwright-layout { gap: 16px; margin-top: 1rem; }
+          .mobile-fab { 
+            display: flex; 
+            bottom: 6rem; /* Sit above footer */
+            right: 1.5rem;
+            padding: 12px 24px;
+            font-size: 14px;
+          }
           .control-panel-container { position: fixed; bottom: 0; left: 0; right: 0; z-index: 2000; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
           .control-panel-container.mobile-open { transform: translateY(0); }
-          .control-panel { border-radius: 20px 20px 0 0; display: block; border-top: 1px solid #8b5cf6; background: #0f172a; padding: 1.5rem 1.5rem 3rem; }
+          .control-panel { border-radius: 20px 20px 0 0; display: block; border-top: 1px solid #8b5cf6; background: #0f172a; padding: 2rem 1.5rem 4rem; }
           .mobile-handle-container { display: flex; justify-content: center; position: relative; margin-bottom: 1.5rem; }
           .mobile-drag-indicator { width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
           .mobile-close-btn { position: absolute; right: 0; top: -5px; background: none; border: none; color: white; cursor: pointer; }
           .save-interview-btn { position: static; width: 100%; margin-bottom: 1.5rem; justify-content: center; }
+          
+          .content-panel { 
+            padding: 1.5rem 1rem; /* 16px horizontal padding */
+            border-radius: 20px; 
+            box-sizing: border-box;
+            max-width: 100%;
+            overflow-x: hidden;
+          }
+
+          .explanation-display {
+            font-size: 14px;
+            line-height: 1.7;
+            word-break: break-word;
+            overflow-wrap: break-word;
+          }
+
+          .explanation-display h1 { font-size: clamp(20px, 6vw, 26px); margin: 1.2rem 0 0.8rem; }
+          .explanation-display h2 { font-size: clamp(18px, 5vw, 22px); margin: 1.2rem 0 0.6rem; }
+          .explanation-display h3 { font-size: clamp(16px, 4vw, 18px); margin: 1rem 0 0.5rem; }
+          .explanation-display p { margin-bottom: 0.8rem; }
+
+          .code-block-wrapper { 
+            margin: 1rem 0; 
+            max-width: 100%;
+            overflow-x: auto; /* Internal scroll only */
+            -webkit-overflow-scrolling: touch;
+            contain: inline-size;
+          }
+          
+          .code-block-wrapper pre {
+            white-space: pre !important;
+            word-break: normal !important;
+            overflow-wrap: normal !important;
+          }
+
+          .control-panel select {
+            font-size: 16px;
+            height: 48px;
+            max-height: 48px;
+          }
         }
       `}</style>
     </div>

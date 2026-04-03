@@ -10,6 +10,7 @@ import Auth from './components/Auth';
 import Portfolio from './components/Portfolio';
 import UserProfilePanel from './components/UserProfilePanel';
 import LearnPlaywright from './components/LearnPlaywright';
+import LearnSQL from './components/LearnSQL';
 import './App.css';
 
 import { auth, db } from './services/firebase';
@@ -105,6 +106,7 @@ function AppContent() {
           <Route path="/linkedin-generator" element={<PostGenerator user={user} />} />
           <Route path="/job-tracker" element={<KanbanBoard user={user} onOpenAuth={() => setShowAuthModal(true)} />} />
           <Route path="/learn-playwright" element={<LearnPlaywright user={user} />} />
+          <Route path="/learn-sql" element={<LearnSQL user={user} />} />
           <Route path="/avishek" element={<Home onOpenPortfolio={() => setShowPortfolio(true)} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

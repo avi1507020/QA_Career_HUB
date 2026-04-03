@@ -83,6 +83,19 @@ const Home = ({ onOpenPortfolio }) => {
              Start Learning
           </Link>
         </div>
+
+        <div className="feature-card">
+          <div style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '1rem', borderRadius: '16px', border: '1px solid rgba(59, 130, 246, 0.3)', width: 'fit-content' }}>
+            <span style={{ fontSize: '28px' }}>🗄️</span>
+          </div>
+          <h3>Learn SQL for QA</h3>
+          <p>
+            Master SQL from basics to advanced database testing. Real queries, test data management, and interview-ready answers for QA engineers.
+          </p>
+          <Link to="/learn-sql" className="primary-button" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', color: 'white', marginTop: 'auto' }}>
+             Start Learning
+          </Link>
+        </div>
       </div>
 
       <div className="highlights-bar">
