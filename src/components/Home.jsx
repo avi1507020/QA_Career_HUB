@@ -7,33 +7,82 @@ const Home = ({ onOpenPortfolio }) => {
     <div className="home-container">
       <div className="hero-section">
         <div className="hero-text">
+          <style>
+            {`
+              @keyframes pulseGlow {
+                0% { text-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
+                50% { text-shadow: 0 0 20px rgba(34, 211, 238, 0.7); }
+                100% { text-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
+              }
+              
+              .builder-link-wrapper {
+                display: inline-flex;
+                align-items: baseline;
+                white-space: nowrap;
+              }
+
+              .builder-link {
+                cursor: pointer;
+                color: #22D3EE;
+                font-weight: 800;
+                font-size: 1.04em;
+                position: relative;
+                transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.25s, text-shadow 0.25s;
+                display: inline-block;
+                text-decoration: none;
+                animation: pulseGlow 3s infinite ease-in-out;
+                padding: 0 2px;
+              }
+
+              .builder-link:hover, .builder-link:focus {
+                outline: none;
+                color: #67E8F9;
+                text-shadow: 0 0 25px rgba(34, 211, 238, 1), 0 0 12px rgba(255, 255, 255, 0.6);
+                transform: scale(1.03) translateY(-1px);
+                animation: none;
+              }
+              
+              /* Added custom focus ring for accessibility without ruining the aesthetic */
+              .builder-link:focus-visible {
+                border-radius: 4px;
+                box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.5);
+              }
+            `}
+          </style>
           <h1>
-            Elevate Your QA Career — <br/> Built by Avishek 🚀
+            Elevate Your QA Career — <br/> Built by{' '}
+            <span className="builder-link-wrapper">
+              <span
+                className="builder-link"
+                role="button"
+                tabIndex={0}
+                aria-label="Meet the Builder"
+                title="Click to know the builder"
+                onClick={onOpenPortfolio}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onOpenPortfolio();
+                  }
+                }}
+              >
+                Avishek
+              </span>
+              <span style={{ marginLeft: '12px', display: 'inline-block', transition: 'transform 0.3s ease' }} className="hero-emoji">🚀</span>
+            </span>
           </h1>
           <p style={{ 
-            color: 'rgba(255,255,255,0.85)', 
+            color: 'rgba(255,255,255,0.95)', 
             fontSize: '1.25rem', 
-            fontWeight: '500', 
+            fontWeight: '600', 
             maxWidth: '650px',
             lineHeight: '1.5',
-            marginBottom: '2rem'
+            marginBottom: '2rem',
+            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
           }}>
-            The professional all-in-one platform crafted by Avishek, QA Automation Engineer — who lives and breathes testing. Track your job applications, stay on top of every interview, and generate high-impact LinkedIn content with AI.
+            The ultimate all-in-one QA platform built by Avishek, designed to accelerate your testing career. <br/><br/>
+            Manage job applications, generate LinkedIn content, practice QA coding, learn Playwright, API automation, SQL, design patterns, and more — all in one place powered by AI.
           </p>
-          <div className="hero-buttons-row">
-            <Link to="/job-tracker" className="primary-button primary-button-blue">
-              Explore Board
-            </Link>
-            <Link to="/linkedin-generator" className="primary-button primary-button-ghost">
-              Create Content
-            </Link>
-            <button 
-              onClick={onOpenPortfolio}
-              className="primary-button primary-button-ghost"
-            >
-              👨‍💻 Meet the Builder
-            </button>
-          </div>
         </div>
         
         <div className="hero-image">
