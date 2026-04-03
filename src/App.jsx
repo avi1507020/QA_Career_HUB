@@ -11,6 +11,10 @@ import Portfolio from './components/Portfolio';
 import UserProfilePanel from './components/UserProfilePanel';
 import LearnPlaywright from './components/LearnPlaywright';
 import LearnSQL from './components/LearnSQL';
+import LearnDesignPatterns from './components/LearnDesignPatterns';
+import CodingPractice from './components/CodingPractice';
+import LearnAPITesting from './components/LearnAPITesting';
+import JobBuddy from './components/JobBuddy';
 import './App.css';
 
 import { auth, db } from './services/firebase';
@@ -107,6 +111,10 @@ function AppContent() {
           <Route path="/job-tracker" element={<KanbanBoard user={user} onOpenAuth={() => setShowAuthModal(true)} />} />
           <Route path="/learn-playwright" element={<LearnPlaywright user={user} />} />
           <Route path="/learn-sql" element={<LearnSQL user={user} />} />
+          <Route path="/learn-design-patterns" element={<LearnDesignPatterns user={user} />} />
+          <Route path="/coding-practice" element={<CodingPractice user={user} />} />
+          <Route path="/learn-api-testing" element={<LearnAPITesting user={user} />} />
+          <Route path="/job-buddy" element={<JobBuddy user={user} />} />
           <Route path="/avishek" element={<Home onOpenPortfolio={() => setShowPortfolio(true)} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
