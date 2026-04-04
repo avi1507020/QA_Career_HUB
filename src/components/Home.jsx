@@ -197,6 +197,19 @@ const Home = ({ onOpenPortfolio }) => {
              Find Jobs
           </Link>
         </div>
+
+        <div className="feature-card">
+          <div className="icon-box" style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+            <span style={{ fontSize: '28px' }}>🎙️</span>
+          </div>
+          <h3>QA Mock Interview</h3>
+          <p>
+            AI-powered timed mock interviews. Pick your topics, answer questions one by one, get scored with real feedback like a live interviewer. Track weak areas across sessions.
+          </p>
+          <Link to="/mock-interview" className="primary-button" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' }}>
+             Start Interview
+          </Link>
+        </div>
       </div>
 
       <div className="highlights-bar">

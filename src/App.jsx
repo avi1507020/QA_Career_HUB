@@ -15,6 +15,7 @@ import LearnDesignPatterns from './components/LearnDesignPatterns';
 import CodingPractice from './components/CodingPractice';
 import LearnAPITesting from './components/LearnAPITesting';
 import JobBuddy from './components/JobBuddy';
+import MockInterview from './components/MockInterview';
 import './App.css';
 
 import { auth, db } from './services/firebase';
@@ -115,6 +116,7 @@ function AppContent() {
           <Route path="/coding-practice" element={<CodingPractice user={user} />} />
           <Route path="/learn-api-testing" element={<LearnAPITesting user={user} />} />
           <Route path="/job-buddy" element={<JobBuddy user={user} />} />
+          <Route path="/mock-interview" element={<MockInterview user={user} />} />
           <Route path="/avishek" element={<Home onOpenPortfolio={() => setShowPortfolio(true)} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
