@@ -14,9 +14,9 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile, onOpenDemo }) => {
   const [isGroqModalOpen, setIsGroqModalOpen] = useState(false);
   
   const hasGroqKey = Boolean(
-    profileData?.groqApiKey || 
-    localStorage.getItem('groq-api-key') || 
-    localStorage.getItem('groq_api_key_guest')
+    user 
+      ? (profileData?.groqApiKey || localStorage.getItem('groq-api-key'))
+      : localStorage.getItem('groq_api_key_guest')
   );
 
   useEffect(() => {
