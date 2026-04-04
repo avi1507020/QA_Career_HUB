@@ -24,7 +24,10 @@ const Auth = ({ onLogin, onClose, onOpenDemo }) => {
 
     try {
       if (isLogin) {
-        if (formData.email === DEMO_EMAIL && formData.password === DEMO_PASSWORD) {
+        const inputEmail = formData.email.trim();
+        const inputPwd = formData.password.trim();
+        
+        if (inputEmail === DEMO_EMAIL && inputPwd === DEMO_PASSWORD) {
           loginAsDemo(DEMO_EMAIL, DEMO_PASSWORD);
           onLogin(getDemoUser());
           return;
