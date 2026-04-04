@@ -77,7 +77,8 @@ const DemoModal = ({ onClose, setUser }) => {
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
       background: 'rgba(0,0,0,0.7)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 50, fontFamily: 'Inter, sans-serif'
+      zIndex: 50, fontFamily: 'Inter, sans-serif',
+      padding: '20px', boxSizing: 'border-box'
     }} onClick={onClose} onKeyDown={(e) => e.key === 'Escape' && onClose()} tabIndex={-1}>
       <div style={{
         background: '#13112a',
@@ -95,6 +96,7 @@ const DemoModal = ({ onClose, setUser }) => {
         
         {/* HEADER */}
         <div style={{
+          flexShrink: 0,
           background: 'linear-gradient(135deg,#1e1b4b,#312e81)',
           padding: '28px 28px 20px',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
@@ -116,7 +118,7 @@ const DemoModal = ({ onClose, setUser }) => {
         </div>
 
         {/* BODY */}
-        <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '14px', flexShrink: 0 }}>
           
           {/* CARD 1: CREDENTIALS */}
           <div style={{
@@ -225,7 +227,7 @@ const DemoModal = ({ onClose, setUser }) => {
         </div>
 
         {/* FOOTER */}
-        <div style={{ padding: '20px 28px 24px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ flexShrink: 0, padding: '20px 28px 24px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <button className="demo-launch-btn" onClick={handleLaunch} style={{ width: '100%', height: '50px', background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '15px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>
             🚀 Launch Demo Now
           </button>
