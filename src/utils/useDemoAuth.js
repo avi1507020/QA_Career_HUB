@@ -38,6 +38,8 @@ export function logoutDemo(setUser, navigate) {
     }
   }
   keysToRemove.forEach(k => sessionStorage.removeItem(k));
+  localStorage.removeItem("groq-api-key");
+  localStorage.removeItem("groq_api_key_guest");
   if (setUser) setUser(null);
   if (navigate) navigate('/');
 }
