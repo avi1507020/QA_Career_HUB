@@ -7,7 +7,9 @@ import { isDemoUser } from '../utils/isDemoUser';
 
 const GroqApiModal = ({ user, onClose }) => {
   const [apiKey, setApiKey] = useState(() => {
-    return localStorage.getItem('groq-api-key') || localStorage.getItem('groq_api_key_guest') || '';
+    return user 
+      ? (localStorage.getItem('groq-api-key') || '')
+      : (localStorage.getItem('groq_api_key_guest') || '');
   });
   const [isApiKeySaved, setIsApiKeySaved] = useState(false);
   const [isCheckingConnection, setIsCheckingConnection] = useState(false);
