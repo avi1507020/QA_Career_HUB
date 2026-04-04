@@ -20,7 +20,10 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile, onOpenDemo }) => {
   );
 
   useEffect(() => {
-    if (!user || isDemoUser(user)) return;
+    if (!user || isDemoUser(user)) {
+      setProfileData(null);
+      return;
+    }
     const unsub = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data().profile || docSnap.data();
