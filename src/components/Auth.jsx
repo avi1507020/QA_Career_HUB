@@ -3,7 +3,7 @@ import { User, Mail, Lock, LogIn, UserPlus, CheckCircle2, AlertCircle, X } from 
 import { auth } from '../services/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
-const Auth = ({ onLogin, onClose }) => {
+const Auth = ({ onLogin, onClose, onOpenDemo }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -146,6 +146,14 @@ const Auth = ({ onLogin, onClose }) => {
             {!loading && (isLogin ? 'Login Now' : 'Create Profile')}
           </button>
         </form>
+
+        <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '12px', textAlign: 'center', margin: '16px 0' }}>─── or ───</div>
+        <button 
+          onClick={onOpenDemo}
+          style={{ width: '100%', height: '48px', background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.35)', borderRadius: '10px', color: '#a78bfa', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+        >
+          🚀 Try Demo — No Sign Up Needed
+        </button>
 
         <p style={{ marginTop: '2rem', color: '#94a3b8', fontSize: '0.9rem' }}>
           {isLogin ? "Don't have an account?" : "Already have a profile?"} 

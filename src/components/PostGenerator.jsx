@@ -3,6 +3,7 @@ import { Sparkles, Copy, CheckCircle, Image as ImageIcon, Loader2, Wifi, AlertCi
 import { generatePosts, generateImagePrompt, checkGroqConnection } from '../services/aiService';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { isDemoUser } from '../utils/isDemoUser';
 
 const PostGenerator = ({ user }) => {
   const [topic, setTopic] = useState('');
@@ -17,6 +18,7 @@ const PostGenerator = ({ user }) => {
   useEffect(() => {
     const fetchGroqKey = async () => {
       if (user) {
+        if (isDemoUser(user)) return;
         try {
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);

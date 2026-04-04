@@ -9,6 +9,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { isDemoUser } from '../utils/isDemoUser';
 
 const LearnDesignPatterns = ({ user }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('TypeScript');
@@ -24,6 +25,7 @@ const LearnDesignPatterns = ({ user }) => {
   useEffect(() => {
     const fetchGroqKey = async () => {
       if (user) {
+        if (isDemoUser(user)) return;
         try {
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);

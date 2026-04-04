@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { db } from '../services/firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoToast } from '../utils/useDemoAuth';
 
 const COLUMN_METADATA = {
   applied: { title: 'Applied', icon: <Layers size={18} />, color: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' },
@@ -55,6 +57,27 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
       return;
     }
 
+    if (isDemoUser(user)) {
+      setColumns({
+        applied: {
+          id: 'applied',
+          jobs: [{ id: "demo_job_1", company: "TCS", role: "QA Automation Engineer", stage: "applied", createdAt: "2025-04-01" }]
+        },
+        scheduled: {
+          id: 'scheduled',
+          jobs: [{ id: "demo_job_2", company: "Infosys", role: "SDET", stage: "scheduled", createdAt: "2025-04-03" }]
+        },
+        technical: { id: 'technical', jobs: [] },
+        hr: { id: 'hr', jobs: [] },
+        selected: { 
+          id: 'selected', 
+          jobs: [{ id: "demo_job_3", company: "Capgemini", role: "Test Analyst", stage: "selected", createdAt: "2025-04-05" }] 
+        },
+        rejected: { id: 'rejected', jobs: [] }
+      });
+      return;
+    }
+
     const docRef = doc(db, "boards", user.uid);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -69,6 +92,10 @@ const KanbanBoard = ({ user, onOpenAuth }) => {
 
   const saveToFirestore = async (newColumns) => {
     if (!user) return;
+    if (isDemoUser(user)) {
+      showDemoToast('KanbanBoard');
+      return;
+    }
     try {
       const docRef = doc(db, "boards", user.uid);
       await setDoc(docRef, { columns: newColumns });

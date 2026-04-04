@@ -3,6 +3,7 @@ import { Wifi, Loader2, HelpCircle, ExternalLink, X, Settings, CheckCircle } fro
 import { checkGroqConnection } from '../services/aiService';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { isDemoUser } from '../utils/isDemoUser';
 
 const GroqApiModal = ({ user, onClose }) => {
   const [apiKey, setApiKey] = useState(() => {
@@ -18,6 +19,7 @@ const GroqApiModal = ({ user, onClose }) => {
   useEffect(() => {
     const fetchGroqKey = async () => {
       if (user) {
+        if (isDemoUser(user)) return;
         try {
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);
@@ -55,6 +57,11 @@ const GroqApiModal = ({ user, onClose }) => {
   const handleSaveApiKey = async () => {
     if (user) {
       localStorage.setItem('groq-api-key', apiKey);
+      if (isDemoUser(user)) {
+        setIsApiKeySaved(true);
+        setTimeout(() => setIsApiKeySaved(false), 2000);
+        return;
+      }
       try {
         const docRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(docRef);

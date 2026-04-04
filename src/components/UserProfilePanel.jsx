@@ -5,6 +5,8 @@ import {
   CheckCircle2, Info, AlertTriangle, ChevronDown, Check
 } from 'lucide-react';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoToast } from '../utils/useDemoAuth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../services/firebase';
 import './UserProfilePanel.css';
@@ -80,6 +82,7 @@ const UserProfilePanel = ({ user, isOpen, onClose }) => {
 
   const fetchProfile = async () => {
     if (!user) return;
+    if (isDemoUser(user)) return;
     setLoading(true);
     try {
       const docRef = doc(db, "users", user.uid);
@@ -126,6 +129,13 @@ const UserProfilePanel = ({ user, isOpen, onClose }) => {
 
   const saveProfile = async () => {
     if (!user) return;
+    if (isDemoUser(user)) {
+      showDemoToast("UserProfilePanel");
+      setInitialProfile(profile);
+      triggerToast("Profile updated successfully!");
+      setEditSections({ basic: false, who: false, prefs: false });
+      return;
+    }
     setLoading(true);
     try {
       const docRef = doc(db, "users", user.uid);
@@ -150,6 +160,10 @@ const UserProfilePanel = ({ user, isOpen, onClose }) => {
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
     if (!file || !user) return;
+    if (isDemoUser(user)) {
+      showDemoToast("UserProfilePanel");
+      return;
+    }
 
     setLoading(true);
     try {

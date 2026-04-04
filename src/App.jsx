@@ -16,6 +16,9 @@ import CodingPractice from './components/CodingPractice';
 import LearnAPITesting from './components/LearnAPITesting';
 import JobBuddy from './components/JobBuddy';
 import MockInterview from './components/MockInterview';
+import DemoModal from './components/DemoModal';
+import { isDemoMode, restoreDemoSession, logoutDemo } from './utils/useDemoAuth';
+import { isDemoUser } from './utils/isDemoUser';
 import './App.css';
 
 import { auth, db } from './services/firebase';
@@ -30,13 +33,22 @@ function AppContent() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
 
   // Sync with real Firebase Auth state
   useEffect(() => {
+    if (!user && isDemoMode()) {
+      restoreDemoSession(setUser);
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (isDemoMode()) return; // Don't override demo session
+
       if (firebaseUser) {
         setUser(firebaseUser);
         
+        if (isDemoUser(firebaseUser)) return;
+
         // Migrate Guest Groq API Key if exists
         const guestKey = localStorage.getItem('groq_api_key_guest');
         if (guestKey) {
@@ -88,6 +100,11 @@ function AppContent() {
 
   const confirmLogout = async () => {
     try {
+      if (isDemoUser(user)) {
+        logoutDemo(setUser, navigate);
+        setShowLogoutConfirm(false);
+        return;
+      }
       await signOut(auth);
       setShowLogoutConfirm(false);
       navigate('/');
@@ -103,11 +120,38 @@ function AppContent() {
         onLogout={handleLogoutClick} 
         onOpenAuth={() => setShowAuthModal(true)} 
         onOpenProfile={() => setShowUserProfile(true)}
+        onOpenDemo={() => setShowDemoModal(true)}
       />
       
       <main className="main-content-full">
+        {isDemoMode() && (
+          <div style={{
+            background: 'linear-gradient(90deg, rgba(124,58,237,0.2),rgba(79,70,229,0.1))',
+            borderBottom: '1px solid rgba(124,58,237,0.25)',
+            padding: '8px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            flexWrap: 'wrap', gap: '8px'
+          }}>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>
+              🚀 Demo Mode — Data is not saved. Explore all features freely!
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => { logoutDemo(setUser, navigate); setShowAuthModal(true); }}
+                style={{ fontSize: '12px', background: 'rgba(124,58,237,0.3)', border: '1px solid rgba(124,58,237,0.5)', color: '#a78bfa', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', minHeight: '36px' }}
+              >
+                Create Real Account
+              </button>
+              <button 
+                onClick={() => logoutDemo(setUser, navigate)}
+                style={{ fontSize: '12px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', minHeight: '36px' }}
+              >
+                Exit Demo
+              </button>
+            </div>
+          </div>
+        )}
         <Routes>
-          <Route path="/" element={<Home onOpenPortfolio={() => { navigate('/avishek'); setShowPortfolio(true); }} />} />
+          <Route path="/" element={<Home onOpenPortfolio={() => { navigate('/avishek'); setShowPortfolio(true); }} onOpenDemo={() => setShowDemoModal(true)} user={user} />} />
           <Route path="/linkedin-generator" element={<PostGenerator user={user} />} />
           <Route path="/job-tracker" element={<KanbanBoard user={user} onOpenAuth={() => setShowAuthModal(true)} />} />
           <Route path="/learn-playwright" element={<LearnPlaywright user={user} />} />
@@ -132,7 +176,12 @@ function AppContent() {
         <Auth 
           onLogin={handleLogin} 
           onClose={() => setShowAuthModal(false)} 
+          onOpenDemo={() => { setShowAuthModal(false); setShowDemoModal(true); }}
         />
+      )}
+
+      {showDemoModal && (
+        <DemoModal onClose={() => setShowDemoModal(false)} setUser={setUser} />
       )}
 
       {user && (

@@ -10,6 +10,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { isDemoUser } from '../utils/isDemoUser';
 
 const PLATFORM_GROUPS = {
   "JOB PORTALS": [
@@ -113,6 +114,7 @@ const JobBuddy = ({ user }) => {
   useEffect(() => {
     const fetchKey = async () => {
       if (user) {
+        if (isDemoUser(user)) return;
         try {
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);

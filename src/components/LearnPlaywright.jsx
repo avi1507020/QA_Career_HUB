@@ -6,9 +6,9 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { isDemoUser } from '../utils/isDemoUser';
 
 const LearnPlaywright = ({ user }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('TypeScript');
@@ -25,6 +25,7 @@ const LearnPlaywright = ({ user }) => {
   useEffect(() => {
     const fetchGroqKey = async () => {
       if (user) {
+        if (isDemoUser(user)) return;
         try {
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);

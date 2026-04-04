@@ -4,8 +4,10 @@ import { Home, User, LogOut, UserPlus, Menu, X, Zap } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import GroqApiModal from './GroqApiModal';
+import { isDemoMode } from '../utils/useDemoAuth';
+import { isDemoUser } from '../utils/isDemoUser';
 
-const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
+const Header = ({ user, onLogout, onOpenAuth, onOpenProfile, onOpenDemo }) => {
   const location = useLocation();
   const [profileData, setProfileData] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,7 +20,7 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
   );
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isDemoUser(user)) return;
     const unsub = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data().profile || docSnap.data();
@@ -63,7 +65,7 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
             </button>
 
             <div 
-              onClick={onOpenProfile}
+              onClick={isDemoUser(user) ? null : onOpenProfile}
               style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -72,24 +74,30 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
                 padding: '0.5rem 1rem', 
                 borderRadius: '16px', 
                 border: '1px solid rgba(255,255,255,0.1)',
-                cursor: 'pointer',
+                cursor: isDemoUser(user) ? 'default' : 'pointer',
                 transition: 'all 0.2s'
               }}
               className="user-chip"
             >
-               <div style={{ width: '36px', height: '36px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.1)' }}>
-                  {profileData?.avatarUrl ? (
-                    <img src={profileData.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <User size={18} />
-                  )}
-               </div>
+               {isDemoUser(user) ? (
+                 <div style={{ width: '28px', height: '28px', background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', fontWeight: '700' }}>
+                   D
+                 </div>
+               ) : (
+                 <div style={{ width: '36px', height: '36px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.1)' }}>
+                    {profileData?.avatarUrl ? (
+                      <img src={profileData.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <User size={18} />
+                    )}
+                 </div>
+               )}
                <div>
-                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '800', color: 'white' }}>
-                    {profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() : (user.displayName || user.email.split('@')[0])}
+                  <p style={{ margin: 0, fontSize: isDemoUser(user) ? '11px' : '0.85rem', fontWeight: isDemoUser(user) ? '600' : '800', color: 'white' }}>
+                    {isDemoUser(user) ? 'Demo User' : (profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() : (user.displayName || user.email.split('@')[0]))}
                   </p>
-                  <p style={{ margin: 0, fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)' }}>
-                    {profileData?.role || 'Active Explorer'}
+                  <p style={{ margin: 0, fontSize: isDemoUser(user) ? '9px' : '0.7rem', color: isDemoUser(user) ? '#a78bfa' : 'rgba(255,255,255,0.6)' }}>
+                    {isDemoUser(user) ? 'Demo Mode 🚀' : (profileData?.role || 'Active Explorer')}
                   </p>
                </div>
             </div>
@@ -100,11 +108,19 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
               style={{ fontSize: '0.8rem', fontWeight: '800' }}
             >
               <LogOut size={16} />
-              Logout
+              {isDemoUser(user) ? 'Exit Demo' : 'Logout'}
             </button>
           </>
         ) : (
           <>
+            <button 
+              onClick={onOpenDemo}
+              className="demo-nav-btn"
+            >
+              <span className="demo-nav-text">🚀 Demo My App</span>
+              <span className="demo-nav-icon" style={{ display: 'none' }}>🚀</span>
+            </button>
+
             <button 
               onClick={onOpenAuth}
               className="primary-button primary-button-blue"
@@ -184,11 +200,19 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
                 style={{ width: '100%', fontSize: '0.9rem', fontWeight: '800', height: '48px' }}
               >
                 <LogOut size={18} />
-                Logout
+                {isDemoUser(user) ? 'Exit Demo' : 'Logout'}
               </button>
             </>
           ) : (
             <>
+              <button 
+                onClick={() => handleMobileAction(onOpenDemo)}
+                className="demo-nav-btn"
+                style={{ marginBottom: '1rem', width: '100%' }}
+              >
+                <span className="demo-nav-text">🚀 Demo My App</span>
+              </button>
+
               <button 
                 onClick={() => handleMobileAction(onOpenAuth)}
                 className="primary-button primary-button-blue"
@@ -214,6 +238,37 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile }) => {
       {isGroqModalOpen && (
         <GroqApiModal user={user} onClose={() => setIsGroqModalOpen(false)} />
       )}
+      <style>{`
+        .demo-nav-btn {
+          background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+          border: 1px solid rgba(255,255,255,0.25);
+          border-radius: 10px;
+          color: white;
+          font-size: 13px;
+          font-weight: 600;
+          padding: 8px 18px;
+          height: 38px;
+          cursor: pointer;
+          backdrop-filter: blur(8px);
+          transition: all 0.2s ease;
+          white-space: nowrap;
+          min-height: 44px;
+          margin-right: 8px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .demo-nav-btn:hover {
+          background: linear-gradient(135deg, rgba(124,58,237,0.4), rgba(79,70,229,0.3));
+          border-color: rgba(124,58,237,0.6);
+          transform: translateY(-1px);
+        }
+        @media (max-width: 768px) {
+          .desktop-menu .demo-nav-btn { margin-right: 4px; padding: 0; width: 44px; }
+          .desktop-menu .demo-nav-text { display: none; }
+          .desktop-menu .demo-nav-icon { display: block !important; margin: 0 auto; font-size: 18px; }
+        }
+      `}</style>
     </header>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Briefcase, CheckCircle } from 'lucide-react';
 
-const Home = ({ onOpenPortfolio }) => {
+const Home = ({ onOpenPortfolio, onOpenDemo, user }) => {
   return (
     <div className="home-container">
       <div className="hero-section">
@@ -83,6 +83,39 @@ const Home = ({ onOpenPortfolio }) => {
             The ultimate all-in-one QA platform built by Avishek, designed to accelerate your testing career. <br/><br/>
             Manage job applications, generate LinkedIn content, practice QA coding, learn Playwright, API automation, SQL, design patterns, and more — all in one place powered by AI.
           </p>
+
+          {!user && (
+            <div style={{ marginTop: '0.5rem', marginBottom: '2rem' }}>
+              <button 
+                onClick={onOpenDemo}
+                style={{
+                  background: 'rgba(124,58,237,0.15)',
+                  border: '1px solid rgba(124,58,237,0.4)',
+                  borderRadius: '12px',
+                  color: '#a78bfa',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  padding: '12px 28px',
+                  cursor: 'pointer',
+                  marginTop: '12px',
+                  minHeight: '44px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(124,58,237,0.3)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.6)'; e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(124,58,237,0.15)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.4)'; e.currentTarget.style.color = '#a78bfa'; }}
+              >
+                🚀 Try Full Demo — No Sign Up Needed
+              </button>
+              <p style={{
+                fontSize: '11px',
+                color: 'rgba(255,255,255,0.3)',
+                marginTop: '6px',
+                letterSpacing: '0.04em'
+              }}>
+                ✓ No credit card &nbsp; ✓ No signup &nbsp; ✓ Full access
+              </p>
+            </div>
+          )}
         </div>
         
         <div className="hero-image">
