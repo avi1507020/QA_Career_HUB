@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { DEMO_EMAIL, DEMO_PASSWORD, loginAsDemo } from '../utils/useDemoAuth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -101,7 +102,8 @@ const DemoModal = ({ onClose, setUser }) => {
           padding: '28px 28px 20px',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           textAlign: 'center',
-          position: 'relative'
+          position: 'relative',
+          borderRadius: '20px 20px 0 0'
         }}>
           <div style={{ fontSize: '44px', marginBottom: '12px' }}>🚀</div>
           <h2 style={{ fontSize: '19px', fontWeight: '800', color: 'white', margin: 0 }}>Try the Full App — Demo Mode</h2>
@@ -110,11 +112,13 @@ const DemoModal = ({ onClose, setUser }) => {
           </p>
           <button onClick={onClose} style={{
             position: 'absolute', top: '16px', right: '16px',
-            width: '32px', height: '32px', minWidth: '44px', minHeight: '44px',
-            background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '8px', color: 'rgba(255,255,255,0.6)',
-            cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>✕</button>
+            width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)',
+            borderRadius: '8px', color: 'white',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10
+          }}>
+            <X size={18} strokeWidth={2.5} />
+          </button>
         </div>
 
         {/* BODY */}
