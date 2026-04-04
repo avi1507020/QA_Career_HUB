@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Mail, Lock, LogIn, UserPlus, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { auth } from '../services/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { DEMO_EMAIL, DEMO_PASSWORD, loginAsDemo, getDemoUser } from '../utils/useDemoAuth';
 
 const Auth = ({ onLogin, onClose, onOpenDemo }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,6 +24,12 @@ const Auth = ({ onLogin, onClose, onOpenDemo }) => {
 
     try {
       if (isLogin) {
+        if (formData.email === DEMO_EMAIL && formData.password === DEMO_PASSWORD) {
+          loginAsDemo(DEMO_EMAIL, DEMO_PASSWORD);
+          onLogin(getDemoUser());
+          return;
+        }
+
         // Real Firebase Login
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
         onLogin(userCredential.user);

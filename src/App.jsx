@@ -90,6 +90,9 @@ function AppContent() {
   }, []);
 
   const handleLogin = (userData) => {
+    if (userData && userData.isDemo) {
+      setUser(userData);
+    }
     // Firebase handles storage automatically, we just close the modal
     setShowAuthModal(false);
   };
@@ -105,6 +108,8 @@ function AppContent() {
         setShowLogoutConfirm(false);
         return;
       }
+      localStorage.removeItem('groq-api-key');
+      localStorage.removeItem('groq_api_key_guest');
       await signOut(auth);
       setShowLogoutConfirm(false);
       navigate('/');
