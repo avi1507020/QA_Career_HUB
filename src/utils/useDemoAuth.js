@@ -21,6 +21,10 @@ export function getDemoUser() {
 export function loginAsDemo(email, password, setUser) {
   if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
     sessionStorage.setItem("qa_hub_demo_mode", "true");
+    sessionStorage.setItem("demo_groq_ready", "true");
+    // Inject demo GROQ key so all pages read it from localStorage automatically
+    const demoKey = import.meta.env.VITE_DEMO_GROQ_KEY;
+    if (demoKey) localStorage.setItem("groq-api-key", demoKey);
     if (setUser) setUser(getDemoUser());
     return { success: true };
   } else {
@@ -30,6 +34,7 @@ export function loginAsDemo(email, password, setUser) {
 
 export function logoutDemo(setUser, navigate) {
   sessionStorage.removeItem("qa_hub_demo_mode");
+  sessionStorage.removeItem("demo_groq_ready");
   const keysToRemove = [];
   for (let i = 0; i < sessionStorage.length; i++) {
     const key = sessionStorage.key(i);
@@ -38,6 +43,7 @@ export function logoutDemo(setUser, navigate) {
     }
   }
   keysToRemove.forEach(k => sessionStorage.removeItem(k));
+  // Remove the demo GROQ key that was injected on login
   localStorage.removeItem("groq-api-key");
   localStorage.removeItem("groq_api_key_guest");
   if (setUser) setUser(null);
@@ -45,8 +51,12 @@ export function logoutDemo(setUser, navigate) {
 }
 
 export function restoreDemoSession(setUser) {
-  if (isDemoMode() && setUser) {
-    setUser(getDemoUser());
+  if (isDemoMode()) {
+    // Re-inject demo GROQ key on page refresh so all pages stay connected
+    const demoKey = import.meta.env.VITE_DEMO_GROQ_KEY;
+    if (demoKey) localStorage.setItem("groq-api-key", demoKey);
+    sessionStorage.setItem("demo_groq_ready", "true");
+    if (setUser) setUser(getDemoUser());
   }
 }
 

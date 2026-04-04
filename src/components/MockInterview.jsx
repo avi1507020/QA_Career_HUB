@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getGroqApiKey } from '../utils/isDemoUser';
 import { 
   BarChart2, 
   X, 
@@ -170,7 +171,7 @@ const MockInterview = ({ user }) => {
     
     try {
       // In a real app we'd call GROQ API. Here we mock for now until the user implements specific prompts
-      const groqApiKey = localStorage.getItem('groq-api-key') || (user?.profile?.groqApiKey);
+      const groqApiKey = getGroqApiKey(user);
       if (!groqApiKey) {
         throw new Error("GROQ API Key is missing. Please set it in options.");
       }

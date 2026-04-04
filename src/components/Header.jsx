@@ -13,11 +13,13 @@ const Header = ({ user, onLogout, onOpenAuth, onOpenProfile, onOpenDemo }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isGroqModalOpen, setIsGroqModalOpen] = useState(false);
   
-  const hasGroqKey = Boolean(
-    user 
-      ? (profileData?.groqApiKey || localStorage.getItem('groq-api-key'))
-      : localStorage.getItem('groq_api_key_guest')
-  );
+  const hasGroqKey = isDemoUser(user)
+    ? true
+    : Boolean(
+        user
+          ? (profileData?.groqApiKey || localStorage.getItem('groq-api-key'))
+          : localStorage.getItem('groq_api_key_guest')
+      );
 
   useEffect(() => {
     if (!user || isDemoUser(user)) {

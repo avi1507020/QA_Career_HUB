@@ -10,7 +10,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { isDemoUser } from '../utils/isDemoUser';
+import { isDemoUser, getGroqApiKey } from '../utils/isDemoUser';
 
 const PLATFORM_GROUPS = {
   "JOB PORTALS": [
@@ -112,19 +112,8 @@ const JobBuddy = ({ user }) => {
   }, [platforms]);
 
   useEffect(() => {
-    const fetchKey = async () => {
-      if (user) {
-        if (isDemoUser(user)) return;
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists() && docSnap.data().profile?.groqApiKey) {
-            setApiKey(docSnap.data().profile.groqApiKey);
-          }
-        } catch (e) { console.error("Error fetching Groq Key:", e); }
-      }
-    };
-    fetchKey();
+    const resolvedKey = getGroqApiKey(user);
+    if (resolvedKey) setApiKey(resolvedKey);
   }, [user]);
 
   const handleSearch = async () => {

@@ -8,7 +8,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { isDemoUser } from '../utils/isDemoUser';
+import { isDemoUser, getGroqApiKey } from '../utils/isDemoUser';
 
 // ─── Content Definitions (framework → topics) ─────────────────────────────────
 const CONTENT_MAP = {
@@ -184,21 +184,8 @@ const LearnAPITesting = ({ user }) => {
   }, [selectedContent]);
 
   useEffect(() => {
-    const fetchKey = async () => {
-      if (user) {
-        if (isDemoUser(user)) return;
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const snap = await getDoc(docRef);
-          if (snap.exists() && snap.data().profile?.groqApiKey) {
-            const k = snap.data().profile.groqApiKey;
-            setApiKey(k);
-            localStorage.setItem('groq-api-key', k);
-          }
-        } catch (e) { console.error(e); }
-      }
-    };
-    fetchKey();
+    const resolvedKey = getGroqApiKey(user);
+    if (resolvedKey) setApiKey(resolvedKey);
   }, [user]);
 
   const handleExplain = async () => {
@@ -264,7 +251,7 @@ const LearnAPITesting = ({ user }) => {
         )}
       </div>
 
-      {!apiKey && (
+      {!apiKey && !isDemoUser(user) && (
         <div className="at-api-warn">
           <AlertCircle size={16} /> Configure your GROQ API key in the navbar to start learning.
         </div>

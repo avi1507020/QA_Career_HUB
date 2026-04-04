@@ -9,7 +9,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { isDemoUser } from '../utils/isDemoUser';
+import { isDemoUser, getGroqApiKey } from '../utils/isDemoUser';
 
 const LearnDesignPatterns = ({ user }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('TypeScript');
@@ -23,28 +23,10 @@ const LearnDesignPatterns = ({ user }) => {
   const [saveStatus, setSaveStatus] = useState(false);
 
   useEffect(() => {
-    const fetchGroqKey = async () => {
-      if (user) {
-        if (isDemoUser(user)) return;
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists() && docSnap.data().profile?.groqApiKey) {
-            const remoteKey = docSnap.data().profile.groqApiKey;
-            setApiKey(remoteKey);
-            localStorage.setItem('groq-api-key', remoteKey);
-          }
-        } catch (e) {
-          console.error("Error fetching Groq API Key:", e);
-        }
-      }
-    };
-    fetchGroqKey();
+    const resolvedKey = getGroqApiKey(user);
+    if (resolvedKey) setApiKey(resolvedKey);
+    setIsApiKeyReady(Boolean(resolvedKey.trim()));
   }, [user]);
-
-  useEffect(() => {
-    setIsApiKeyReady(Boolean(apiKey.trim()));
-  }, [apiKey]);
 
   const handleCopy = (text, id) => {
     navigator.clipboard.writeText(text);
@@ -364,7 +346,7 @@ const LearnDesignPatterns = ({ user }) => {
         </div>
       </div>
 
-      {!isApiKeyReady && (
+      {!isApiKeyReady && !isDemoUser(user) && (
         <div className="glass-card" style={{ marginBottom: '2rem', padding: '1.2rem', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
           <AlertCircle size={18} style={{ marginRight: '10px', verticalAlign: 'middle' }} />
           Configure your GROQ API key in the navbar to start learning Design Patterns.

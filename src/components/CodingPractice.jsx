@@ -11,7 +11,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { isDemoUser } from '../utils/isDemoUser';
+import { isDemoUser, getGroqApiKey } from '../utils/isDemoUser';
 
 const CodingPractice = ({ user }) => {
   const navigate = useNavigate();
@@ -60,25 +60,10 @@ const CodingPractice = ({ user }) => {
     }
   }, [selectedLanguage]);
 
-  // Read Groq Key
+  // Read Groq Key — demo users get env key, real users get Firestore key
   useEffect(() => {
-    const fetchKey = async () => {
-      if (user) {
-        if (isDemoUser(user)) return;
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists() && docSnap.data().profile?.groqApiKey) {
-            const remoteKey = docSnap.data().profile.groqApiKey;
-            setApiKey(remoteKey);
-            localStorage.setItem('groq-api-key', remoteKey);
-          }
-        } catch (e) {
-          console.error("Error fetching Groq Key:", e);
-        }
-      }
-    };
-    fetchKey();
+    const resolvedKey = getGroqApiKey(user);
+    if (resolvedKey) setApiKey(resolvedKey);
   }, [user]);
 
   // Load first question
@@ -127,7 +112,9 @@ const CodingPractice = ({ user }) => {
 
       if (!response.ok) throw new Error("Failed to load question");
       const data = await response.json();
-      const newQuestion = JSON.parse(data.choices[0].message.content);
+      let rawContent = data.choices[0].message.content.trim();
+      rawContent = rawContent.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      const newQuestion = JSON.parse(rawContent);
       
       setQuestion(newQuestion);
       setPreviousTopics(prev => [newQuestion.topic, ...prev].slice(0, 5));
@@ -180,7 +167,9 @@ const CodingPractice = ({ user }) => {
 
       if (!response.ok) throw new Error("Failed to check code");
       const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
+      let rawResult = data.choices[0].message.content.trim();
+      rawResult = rawResult.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      const result = JSON.parse(rawResult);
       setFeedback(result);
 
       // Save to history
