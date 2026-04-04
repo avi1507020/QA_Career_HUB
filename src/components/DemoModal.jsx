@@ -76,7 +76,7 @@ const DemoModal = ({ onClose, setUser }) => {
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.7)',
+      background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 50, fontFamily: 'Inter, sans-serif',
       padding: '20px', boxSizing: 'border-box'
@@ -85,44 +85,47 @@ const DemoModal = ({ onClose, setUser }) => {
         background: '#13112a',
         border: '1px solid rgba(255,255,255,0.12)',
         borderRadius: '20px',
-        width: '520px',
-        maxWidth: '95vw',
+        width: '90%',
+        maxWidth: '480px',
         maxHeight: '90vh',
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        animation: 'modalIn 0.2s ease',
-        position: 'relative'
+        animation: 'modalFadeScale 0.25s ease-out forwards',
+        position: 'relative',
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), 0 0 40px rgba(124,58,237,0.1)'
       }} onClick={e => e.stopPropagation()} className="demo-modal-box">
         
         {/* HEADER */}
         <div style={{
           flexShrink: 0,
           background: 'linear-gradient(135deg,#1e1b4b,#312e81)',
-          padding: '28px 28px 20px',
+          padding: '24px 44px 16px 44px',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           textAlign: 'center',
           position: 'relative',
           borderRadius: '20px 20px 0 0'
         }}>
-          <div style={{ fontSize: '44px', marginBottom: '12px' }}>🚀</div>
-          <h2 style={{ fontSize: '19px', fontWeight: '800', color: 'white', margin: 0 }}>Try the Full App — Demo Mode</h2>
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginTop: '6px', lineHeight: '1.5', marginBottom: 0 }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'white', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            Try the Full App — Demo Mode 🚀
+          </h2>
+          <p style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.6)', marginTop: '6px', lineHeight: '1.4', marginBottom: 0 }}>
             No sign up needed. Explore everything instantly. Data is not saved.
           </p>
-          <button onClick={onClose} style={{
+          <button onClick={onClose} className="demo-close-btn" style={{
             position: 'absolute', top: '16px', right: '16px',
             width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
             background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)',
             borderRadius: '8px', color: 'white',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10,
+            transition: 'all 0.2s ease'
           }}>
             <X size={18} strokeWidth={2.5} />
           </button>
         </div>
 
         {/* BODY */}
-        <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '14px', flexShrink: 0 }}>
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px', flexShrink: 0 }}>
           
           {/* CARD 1: CREDENTIALS */}
           <div style={{
@@ -181,7 +184,7 @@ const DemoModal = ({ onClose, setUser }) => {
           </div>
 
           {/* CARD 4: GROQ */}
-          <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: '14px', padding: '18px' }}>
+          <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: '12px', padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>⚡ Connect GROQ API for Best Experience</div>
               <div style={{ background: 'rgba(124,58,237,0.3)', border: '1px solid rgba(124,58,237,0.5)', color: '#a78bfa', borderRadius: '20px', padding: '3px 10px', fontSize: '10px', fontWeight: '700' }}>Recommended</div>
@@ -231,7 +234,7 @@ const DemoModal = ({ onClose, setUser }) => {
         </div>
 
         {/* FOOTER */}
-        <div style={{ flexShrink: 0, padding: '20px 28px 24px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ flexShrink: 0, padding: '16px 24px 20px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <button className="demo-launch-btn" onClick={handleLaunch} style={{ width: '100%', height: '50px', background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '15px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}>
             🚀 Launch Demo Now
           </button>
@@ -241,10 +244,12 @@ const DemoModal = ({ onClose, setUser }) => {
         </div>
       </div>
       <style>{`
-        @keyframes modalIn {
-          from { opacity: 0; transform: scale(0.95) translateY(10px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes modalFadeScale {
+          from { opacity: 0; transform: scale(0.96); }
+          to { opacity: 1; transform: scale(1); }
         }
+        .demo-close-btn:hover { background: rgba(255,255,255,0.2) !important; transform: scale(1.05); }
+        .demo-close-btn:active { transform: scale(0.95); }
         .demo-modal-box::-webkit-scrollbar { width: 4px; }
         .demo-modal-box::-webkit-scrollbar-track { background: transparent; }
         .demo-modal-box::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.5); border-radius: 4px; }
